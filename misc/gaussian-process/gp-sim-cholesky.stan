@@ -5,14 +5,14 @@
 
 data {
   int<lower=1> N;
-  real x[N];
+  array[N] real x;
 }
 transformed data {
   vector[N] mu = rep_vector(0, N);
   matrix[N, N] L;
   {
-    matrix[N, N] K = cov_exp_quad(x, 1.0, 1.0);
-    for (n in 1:N) 
+    matrix[N, N] K = gp_exp_quad_cov(x, 1.0, 1.0);
+    for (n in 1 : N) 
       K[n, n] = K[n, n] + 0.1;
     L = cholesky_decompose(K);
   }
@@ -27,3 +27,4 @@ generated quantities {
   vector[N] y;
   y = mu + L * eta;
 }
+
